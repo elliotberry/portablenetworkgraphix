@@ -14,8 +14,10 @@
     "Michael Vogt",
     "Xin-Xin Wang",
     "toriningen",
-    "Eugene Kulabuhov"
+    "Eugene Kulabuhov",
+    "elliot"
   ],
+  "type": "module",
   "homepage": "https://github.com/pngjs/pngjs",
   "keywords": [
     "PNG",
