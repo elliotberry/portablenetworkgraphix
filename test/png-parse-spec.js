@@ -1,13 +1,13 @@
-let test = require("tape");
-let fs = require("fs");
-let path = require("path");
-let PNG = require("../lib/png").PNG;
-let stream = require("stream");
+import test from "tape";
+import fs from "fs";
+import path from "path";
+import {PNG} from "../lib/png.js";
+import stream from "stream";
 
 function parseFile(filename, cb) {
   fs.createReadStream(path.join(__dirname, "png-parse-data", filename))
     .pipe(new PNG())
-    .on("error", function (e) {
+    .on("error", e => {
       console.log("error");
       cb(e);
     })
@@ -22,7 +22,7 @@ function parseBuffer(buffer, cb) {
 
   bufferStream
     .pipe(new PNG({}))
-    .on("error", function (e) {
+    .on("error", e => {
       cb(e);
     })
     .on("parse", function () {
@@ -30,22 +30,24 @@ function parseBuffer(buffer, cb) {
     });
 }
 
-function getPixel(png, x, y) {
-  return png.data.readUInt32BE((x + y * png.width) * 4);
+function getPixel({data, width}, x, y) {
+  return data.readUInt32BE((x + y * width) * 4);
 }
 
-test("should correctly parse an 1-bit colormap png", function (t) {
+test("should correctly parse an 1-bit colormap png", t => {
   t.timeoutAfter(5000);
-  parseFile("1bit.png", function (err, png) {
+  parseFile("1bit.png", (err, png) => {
     t.equal(err, null, "there should be no error");
     t.equal(png.width, 1024, "the width should be 1024");
     t.equal(png.height, 1024, "the height should be 1024");
     //t.equal(png.bpp, 1, "the bpp should be 1");
     t.equal(png.data.length, 1024 * 1024 * 4);
+
     //t.equal(png.trailer.length, 0);
 
-    let y = 1024,
-      x;
+    let y = 1024;
+
+    let x;
 
     let isOk = true;
     while (y--) {
@@ -53,7 +55,7 @@ test("should correctly parse an 1-bit colormap png", function (t) {
       while (x--)
         if (getPixel(png, x, y) !== 0x000000ff) {
           t.fail(
-            "pixel does not match - " + getPixel(png, x, y) + " !== 0x000000FF"
+            `pixel does not match - ${getPixel(png, x, y)} !== 0x000000FF`
           );
           isOk = false;
           break;
@@ -65,17 +67,19 @@ test("should correctly parse an 1-bit colormap png", function (t) {
   });
 });
 
-test("should correctly parse an 8-bit grayscale png", function (t) {
-  parseFile("grayscale.png", function (err, png) {
+test("should correctly parse an 8-bit grayscale png", t => {
+  parseFile("grayscale.png", (err, png) => {
     t.equal(err, null);
     t.equal(png.width, 16);
     t.equal(png.height, 16);
     //t.equal(png.bpp, 1);
     t.equal(png.data.length, 16 * 16 * 4);
+
     //t.equal(png.trailer.toString(), "Hello, world!\n");
 
-    let y = 16,
-      x;
+    let y = 16;
+
+    let x;
 
     let isOk = true;
     while (y--) {
@@ -83,10 +87,7 @@ test("should correctly parse an 8-bit grayscale png", function (t) {
       while (x--) {
         if (getPixel(png, x, y) !== (x ^ y) * 286331136 + 255) {
           t.fail(
-            "pixel does not match - " +
-              getPixel(png, x, y) +
-              " !== " +
-              ((x ^ y) * 286331136 + 255)
+            `pixel does not match - ${getPixel(png, x, y)} !== ${(x ^ y) * 286331136 + 255}`
           );
           isOk = false;
           break;
@@ -99,17 +100,19 @@ test("should correctly parse an 8-bit grayscale png", function (t) {
   });
 });
 
-test("should correctly parse an 8-bit truecolor png", function (t) {
-  parseFile("truecolor.png", function (err, png) {
+test("should correctly parse an 8-bit truecolor png", t => {
+  parseFile("truecolor.png", (err, png) => {
     t.equal(err, null);
     t.equal(png.width, 16);
     t.equal(png.height, 16);
     //t.equal(png.bpp, 3);
     t.equal(png.data.length, 16 * 16 * 4);
+
     //t.equal(png.trailer.length, 0);
 
-    let y = 16,
-      x;
+    let y = 16;
+
+    let x;
 
     let isOk = true;
     while (y--) {
@@ -120,10 +123,7 @@ test("should correctly parse an 8-bit truecolor png", function (t) {
           x * 285212672 + y * 1114112 + (x ^ y) * 4352 + 255
         ) {
           t.fail(
-            "pixel does not match - " +
-              getPixel(png, x, y) +
-              " !== " +
-              (x * 285212672 + y * 1114112 + (x ^ y) * 4352 + 255)
+            `pixel does not match - ${getPixel(png, x, y)} !== ${x * 285212672 + y * 1114112 + (x ^ y) * 4352 + 255}`
           );
           isOk = false;
           break;
@@ -136,17 +136,19 @@ test("should correctly parse an 8-bit truecolor png", function (t) {
   });
 });
 
-test("should correctly parse an 8-bit truecolor png with alpha", function (t) {
-  parseFile("truecoloralpha.png", function (err, png) {
+test("should correctly parse an 8-bit truecolor png with alpha", t => {
+  parseFile("truecoloralpha.png", (err, png) => {
     t.equal(err, null);
     t.equal(png.width, 16);
     t.equal(png.height, 16);
     //t.equal(png.bpp, 4);
     t.equal(png.data.length, 16 * 16 * 4);
+
     //t.equal(png.trailer.length, 0);
 
-    let y = 16,
-      x;
+    let y = 16;
+
+    let x;
     let isOk = true;
 
     while (y--) {
@@ -157,10 +159,7 @@ test("should correctly parse an 8-bit truecolor png with alpha", function (t) {
           x * 285212672 + y * 1114112 + (x ^ y) * 17
         ) {
           t.fail(
-            "pixel does not match - " +
-              getPixel(png, x, y) +
-              " !== " +
-              (x * 285212672 + y * 1114112 + (x ^ y) * 17)
+            `pixel does not match - ${getPixel(png, x, y)} !== ${x * 285212672 + y * 1114112 + (x ^ y) * 17}`
           );
           isOk = false;
           break;
@@ -173,8 +172,8 @@ test("should correctly parse an 8-bit truecolor png with alpha", function (t) {
   });
 });
 
-test("should correctly read image with scanline filter", function (t) {
-  parseFile("accum.png", function (err, png) {
+test("should correctly read image with scanline filter", t => {
+  parseFile("accum.png", (err, png) => {
     t.equal(err, null);
     t.equal(png.width, 1024);
     t.equal(png.height, 1024);
@@ -193,17 +192,19 @@ test("should correctly read image with scanline filter", function (t) {
   });
 });
 
-test("should correctly read an indexed color image", function (t) {
-  parseFile("indexed.png", function (err, png) {
+test("should correctly read an indexed color image", t => {
+  parseFile("indexed.png", (err, png) => {
     t.equal(err, null);
     t.equal(png.width, 16);
     t.equal(png.height, 16);
     //t.equal(png.bpp, 3);
     t.equal(png.data.length, 16 * 16 * 4);
+
     //t.equal(png.trailer.length, 0);
 
-    let y = 16,
-      x;
+    let y = 16;
+
+    let x;
     let isOk = true;
 
     while (y--) {
@@ -222,7 +223,7 @@ test("should correctly read an indexed color image", function (t) {
 
         if (getPixel(png, x, y) !== expected) {
           t.fail(
-            "pixel does not match - " + getPixel(png, x, y) + " !== " + expected
+            `pixel does not match - ${getPixel(png, x, y)} !== ${expected}`
           );
           isOk = false;
           break;
@@ -234,17 +235,19 @@ test("should correctly read an indexed color image", function (t) {
   });
 });
 
-test("should correctly read an indexed color image with alpha", function (t) {
-  parseFile("indexedalpha.png", function (err, png) {
+test("should correctly read an indexed color image with alpha", t => {
+  parseFile("indexedalpha.png", (err, png) => {
     t.equal(err, null);
     t.equal(png.width, 16);
     t.equal(png.height, 16);
     //t.equal(png.bpp, 4);
     t.equal(png.data.length, 16 * 16 * 4);
+
     //t.equal(png.trailer.length, 0);
 
-    let y = 16,
-      x;
+    let y = 16;
+
+    let x;
     let isOk = true;
 
     while (y--) {
@@ -265,7 +268,7 @@ test("should correctly read an indexed color image with alpha", function (t) {
 
         if (getPixel(png, x, y) !== expected) {
           t.fail(
-            "pixel does not match - " + getPixel(png, x, y) + " !== " + expected
+            `pixel does not match - ${getPixel(png, x, y)} !== ${expected}`
           );
           isOk = false;
           break;
@@ -278,8 +281,8 @@ test("should correctly read an indexed color image with alpha", function (t) {
   });
 });
 
-test("should correctly support crazily-filtered images", function (t) {
-  parseFile("paeth.png", function (err, png) {
+test("should correctly support crazily-filtered images", t => {
+  parseFile("paeth.png", (err, png) => {
     t.equal(err, null);
     t.equal(png.width, 512);
     t.equal(png.height, 512);
@@ -321,72 +324,72 @@ test("should correctly support crazily-filtered images", function (t) {
   });
 });
 
-test("should bail with an error given an invalid PNG", function (t) {
+test("should bail with an error given an invalid PNG", t => {
   let buf = Buffer.from("I AM NOT ACTUALLY A PNG", "utf8");
 
-  return parseBuffer(buf, function (err) {
+  return parseBuffer(buf, err => {
     t.ok(err instanceof Error, "Error should be received");
     t.end();
   });
 });
 
-test("should bail with an error given an empty file", function (t) {
+test("should bail with an error given an empty file", t => {
   let buf = Buffer.from("");
 
-  return parseBuffer(buf, function (err) {
+  return parseBuffer(buf, err => {
     t.ok(err instanceof Error, "Error should be received");
     t.end();
   });
 });
 
-test("should bail with an error given a bad chunk type", function (t) {
-  parseFile("with_bad_type.png", function (err, png) {
+test("should bail with an error given a bad chunk type", t => {
+  parseFile("with_bad_type.png", (err, png) => {
     t.ok(err instanceof Error, "Error should be received");
     t.equal(png, undefined, "PNG should not be defined");
     t.end();
   });
 });
 
-test("should bail with an error given a truncated PNG", function (t) {
+test("should bail with an error given a truncated PNG", t => {
   let buf = Buffer.from("89504e470d0a1a0a000000", "hex");
 
-  return parseBuffer(buf, function (err) {
+  return parseBuffer(buf, err => {
     t.ok(err instanceof Error, "Error should be received");
     t.end();
   });
 });
 
-test("should return an error if a PNG is normal except for a missing IEND", function (t) {
+test("should return an error if a PNG is normal except for a missing IEND", t => {
   let buf = Buffer.from(
     "89504e470d0a1a0a0000000d49484452000000100000001008000000003a98a0bd000000017352474200aece1ce90000002174455874536f6674776172650047726170686963436f6e7665727465722028496e74656c297787fa190000008849444154789c448e4111c020100363010b58c00216b080052c60010b58c0c259c00216ae4d3b69df99dd0d1062caa5b63ee6b27d1c012996dceae86b6ef38398106acb65ae3e8edbbef780564b5e73743fdb409e1ef2f4803c3de4e901797ac8d3f3f0f490a7077ffffd03f5f507eaeb0fd4d71fa8af3f505f7fa0befe7c7dfdb9000000ffff0300c0fd7f8179301408",
     "hex"
   );
 
-  return parseBuffer(buf, function (err) {
+  return parseBuffer(buf, err => {
     t.ok(err instanceof Error, "Error should be received");
     t.end();
   });
 });
 
-test("should set alpha=true in metadata for images with tRNS chunk", function (t) {
+test("should set alpha=true in metadata for images with tRNS chunk", t => {
   fs.createReadStream(path.join(__dirname, "in", "tbbn0g04.png"))
     .pipe(new PNG())
-    .on("metadata", function (metadata) {
-      t.ok(metadata.alpha, "Image should have alpha=true");
+    .on("metadata", ({alpha}) => {
+      t.ok(alpha, "Image should have alpha=true");
       t.end();
     });
 });
 
-test("Should parse with low highWaterMark", function (t) {
+test("Should parse with low highWaterMark", t => {
   fs.createReadStream(path.join(__dirname, "in", "tbbn0g04.png"), {
     highWaterMark: 2,
   })
     .pipe(new PNG())
-    .on("parsed", function () {
+    .on("parsed", () => {
       t.pass("Image should have parsed");
       t.end();
     })
-    .on("error", function (e) {
+    .on("error", e => {
       t.error(e, "Should not error");
     });
 });

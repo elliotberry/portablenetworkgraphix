@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-let fs = require("fs"),
-  PNG = require("../lib/png").PNG;
-
-let srcFname = process.argv[2],
-  dstFname = process.argv[3] || "out.png";
+import fs from "fs";
+import {PNG} from "../lib/png.js";
+let srcFname = process.argv[2];
+let dstFname = process.argv[3] || "out.png";
 
 // Read a PNG file
 let data = fs.readFileSync(srcFname);

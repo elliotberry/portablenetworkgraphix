@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
-let fs = require("fs"),
-  PNG = require("../lib/png").PNG;
+import fs from "fs";
+import {PNG} from "../lib/png.js";
 
 let png = new PNG({
     filterType: -1,
-  }),
-  src = fs.createReadStream(process.argv[2]),
-  dst = fs.createWriteStream(process.argv[3] || "out.png");
+  });
 
-png.on("parsed", function () {
+let src = fs.createReadStream(process.argv[2]);
+let dst = fs.createWriteStream(process.argv[3] || "out.png");
+
+png.on("parsed", () => {
   for (let y = 0; y < png.height; y++) {
     for (let x = 0; x < png.width; x++) {
       let idx = (png.width * y + x) << 2;

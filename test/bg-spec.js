@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-let fs = require("fs");
-let PNG = require("../lib/png").PNG;
-let test = require("tape");
-let bufferEqual = require("buffer-equal");
+import fs from "fs";
+import {PNG} from "../lib/png.js";
+import test from "tape";
+import bufferEqual from "buffer-equal";
 
-test("outputs background, created from scratch", function (t) {
+test("outputs background, created from scratch", t => {
   t.timeoutAfter(1000 * 60 * 5);
 
   let png = new PNG({
@@ -29,10 +29,10 @@ test("outputs background, created from scratch", function (t) {
 
   png
     .pack()
-    .pipe(fs.createWriteStream(__dirname + "/bg.png"))
-    .on("finish", function () {
-      let out = fs.readFileSync(__dirname + "/bg.png");
-      let ref = fs.readFileSync(__dirname + "/bg-ref.png");
+    .pipe(fs.createWriteStream(`${__dirname}/bg.png`))
+    .on("finish", () => {
+      let out = fs.readFileSync(`${__dirname}/bg.png`);
+      let ref = fs.readFileSync(`${__dirname}/bg-ref.png`);
 
       let isBufferEqual = bufferEqual(out, ref);
       t.ok(isBufferEqual, "compares with working file ok");

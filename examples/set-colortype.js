@@ -1,5 +1,5 @@
-let fs = require("fs");
-let PNG = require("../lib/png").PNG;
+import fs from "fs";
+import {PNG} from "../lib/png.js";
 let w = 320;
 let h = 200;
 

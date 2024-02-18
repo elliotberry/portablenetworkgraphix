@@ -62,9 +62,58 @@
   "bugs": {
     "url": "https://github.com/pngjs/pngjs/issues"
   },
+  "eslintIgnore":["/browser.js", "/test/imagediff.js"],
+  "prettier": {
+    "arrowParens": "always",
+    "bracketSameLine": true,
+    "bracketSpacing": true,
+    "semi": false,
+    "experimentalTernaries": true,
+    "singleQuote": false,
+    "jsxSingleQuote": false,
+    "quoteProps": "as-needed",
+    "trailingComma": "none",
+    "singleAttributePerLine": false,
+    "htmlWhitespaceSensitivity": "css",
+    "vueIndentScriptAndStyle": false,
+    "proseWrap": "preserve",
+    "insertPragma": false,
+    "printWidth": 80,
+    "requirePragma": false,
+    "tabWidth": 2,
+    "useTabs": false,
+    "embeddedLanguageFormatting": "auto"
+},
+"eslintConfig": {
+    "root": true,
+    "plugins": [
+        "prettier",
+        "@stylistic/js",
+        "unicorn"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:prettier/recommended",
+        "plugin:unicorn/recommended"
+    ],
+    "env": {
+        "es2021": true,
+        "node": true,
+        "es6": true,
+        "es2024": true
+    },
+    "rules": {
+        "no-unused-vars": "warn",
+        "no-console": "off"
+    }
+},
   "devDependencies": {
     "browserify": "17.0.0",
-    "buffer-equal": "1.0.1",
+    "buffer-equal": "^1.0.1",
     "connect": "3.7.0",
     "eslint": "8.39.0",
     "eslint-config-prettier": "8.8.0",
@@ -73,6 +122,6 @@
     "puppeteer": "19.7.1",
     "serve-static": "1.15.0",
     "tap-dot": "2.0.0",
-    "tape": "5.6.3"
+    "tape": "^5.7.5"
   }
 }

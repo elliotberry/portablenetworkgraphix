@@ -1,5 +1,5 @@
-const closeServer = require("./http-server");
-const puppeteer = require("puppeteer");
+import closeServer from "./http-server";
+import puppeteer from "puppeteer";
 const URL = "http://localhost:8000";
 
 puppeteer
@@ -25,10 +25,10 @@ puppeteer
     await browser.close();
     if (results) {
       let success = true;
-      let successes = [],
-        failures = [];
-      for (let i = 0; i < results.length; i++) {
-        let result = results[i];
+      let successes = [];
+      let failures = [];
+
+      for (let result of results) {
         if (result.success) {
           successes.push(result.name);
         } else {
@@ -36,6 +36,7 @@ puppeteer
         }
         success = success && result.success;
       }
+
       console.log("Success:", successes.join(", "));
       if (failures.length) {
         console.log("Failure:", failures.join(", "));

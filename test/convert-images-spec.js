@@ -1,38 +1,33 @@
-let fs = require("fs");
-let PNG = require("../lib/png").PNG;
-let test = require("tape");
+import fs from "fs";
+import {PNG} from "../lib/png.js";
+import test from "tape";
 
-fs.readdir(__dirname + "/in/", function (err, files) {
+fs.readdir(`${__dirname}/in/`, (err, files) => {
   if (err) throw err;
 
-  files = files.filter(function (file) {
+  files = files.filter(file => {
     return Boolean(file.match(/\.png$/i));
   });
 
   console.log("Converting images");
 
-  files.forEach(function (file) {
+  files.forEach(file => {
     let expectedError = false;
     if (file.match(/^x/)) {
       expectedError = true;
     }
 
-    test("convert sync - " + file, function (t) {
+    test(`convert sync - ${file}`, t => {
       t.timeoutAfter(1000 * 60 * 5);
 
-      let data = fs.readFileSync(__dirname + "/in/" + file);
+      let data = fs.readFileSync(`${__dirname}/in/${file}`);
       let png;
       try {
         png = PNG.sync.read(data);
       } catch (e) {
         if (!expectedError) {
           t.fail(
-            "Unexpected error parsing.." +
-              file +
-              "\n" +
-              e.message +
-              "\n" +
-              e.stack
+            `Unexpected error parsing..${file}\n${e.message}\n${e.stack}`
           );
         } else {
           t.pass("completed");
@@ -41,7 +36,7 @@ fs.readdir(__dirname + "/in/", function (err, files) {
       }
 
       if (expectedError) {
-        t.fail("Sync: Error expected, parsed fine .. - " + file);
+        t.fail(`Sync: Error expected, parsed fine .. - ${file}`);
         return t.end();
       }
 
@@ -52,28 +47,23 @@ fs.readdir(__dirname + "/in/", function (err, files) {
       outpng.height = png.height;
       outpng.pack().pipe(
         fs
-          .createWriteStream(__dirname + "/outsync/" + file)
-          .on("finish", function () {
+          .createWriteStream(`${__dirname}/outsync/${file}`)
+          .on("finish", () => {
             t.pass("completed");
             t.end();
           })
       );
     });
 
-    test("convert async - " + file, function (t) {
+    test(`convert async - ${file}`, t => {
       t.timeoutAfter(1000 * 60 * 5);
 
-      fs.createReadStream(__dirname + "/in/" + file)
+      fs.createReadStream(`${__dirname}/in/${file}`)
         .pipe(new PNG())
-        .on("error", function (err) {
+        .on("error", ({message, stack}) => {
           if (!expectedError) {
             t.fail(
-              "Async: Unexpected error parsing.." +
-                file +
-                "\n" +
-                err.message +
-                "\n" +
-                err.stack
+              `Async: Unexpected error parsing..${file}\n${message}\n${stack}`
             );
           } else {
             t.pass("completed");
@@ -82,14 +72,14 @@ fs.readdir(__dirname + "/in/", function (err, files) {
         })
         .on("parsed", function () {
           if (expectedError) {
-            t.fail("Async: Error expected, parsed fine .." + file);
+            t.fail(`Async: Error expected, parsed fine ..${file}`);
             return t.end();
           }
 
           this.pack().pipe(
             fs
-              .createWriteStream(__dirname + "/out/" + file)
-              .on("finish", function () {
+              .createWriteStream(`${__dirname}/out/${file}`)
+              .on("finish", () => {
                 t.pass("completed");
                 t.end();
               })

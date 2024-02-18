@@ -5,14 +5,13 @@
 // http://www.github.com/HumbleSoftware/js-imagediff
 
 (function (name, definition) {
-  var root = this;
+  const root = this;
   if (typeof module !== 'undefined') {
     try {
       var Canvas = require('canvas');
     } catch (e) {
       throw new Error(
-        e.message + '\n' +
-        'Please see https://github.com/HumbleSoftware/js-imagediff#cannot-find-module-canvas\n'
+        `${e.message}\nPlease see https://github.com/HumbleSoftware/js-imagediff#cannot-find-module-canvas\n`
       );
     }
     module.exports = definition(root, name, Canvas);
@@ -21,28 +20,24 @@
   } else {
     root[name] = definition(root, name);
   }
-})('imagediff', function (root, name, Canvas) {
-
-  var
-    TYPE_ARRAY        = /\[object Array\]/i,
-    TYPE_CANVAS       = /\[object (Canvas|HTMLCanvasElement)\]/i,
-    TYPE_CONTEXT      = /\[object CanvasRenderingContext2D\]/i,
-    TYPE_IMAGE        = /\[object (Image|HTMLImageElement)\]/i,
-    TYPE_IMAGE_DATA   = /\[object ImageData\]/i,
-
-    UNDEFINED         = 'undefined',
-
-    canvas            = getCanvas(),
-    context           = canvas.getContext('2d'),
-    previous          = root[name],
-    imagediff, jasmine;
+})('imagediff', (root, name, Canvas) => {
+  const TYPE_ARRAY        = /\[object Array\]/i;
+  const TYPE_CANVAS       = /\[object (Canvas|HTMLCanvasElement)\]/i;
+  const TYPE_CONTEXT      = /\[object CanvasRenderingContext2D\]/i;
+  const TYPE_IMAGE        = /\[object (Image|HTMLImageElement)\]/i;
+  const TYPE_IMAGE_DATA   = /\[object ImageData\]/i;
+  const UNDEFINED         = 'undefined';
+  const canvas            = getCanvas();
+  const context           = canvas.getContext('2d');
+  const previous          = root[name];
+  let imagediff;
+  let jasmine;
 
   // Creation
   function getCanvas (width, height) {
-    var
-      canvas = Canvas ?
-        new Canvas() :
-        document.createElement('canvas');
+    const canvas = Canvas ?
+      new Canvas() :
+      document.createElement('canvas');
     if (width) canvas.width = width;
     if (height) canvas.height = height;
     return canvas;
@@ -91,11 +86,12 @@
 
   // Type Conversion
   function copyImageData (imageData) {
-    var
-      height = imageData.height,
-      width = imageData.width,
-      data = imageData.data,
-      newImageData, newData, i;
+    const height = imageData.height;
+    const width = imageData.width;
+    const data = imageData.data;
+    let newImageData;
+    let newData;
+    let i;
 
     canvas.width = width;
     canvas.height = height;
@@ -115,9 +111,8 @@
     if (isImageData(object)) { return object; }
   }
   function toImageDataFromImage (image) {
-    var
-      height = image.height,
-      width = image.width;
+    const height = image.height;
+    const width = image.width;
     canvas.width = width;
     canvas.height = height;
     context.clearRect(0, 0, width, height);
@@ -125,24 +120,21 @@
     return context.getImageData(0, 0, width, height);
   }
   function toImageDataFromCanvas (canvas) {
-    var
-      height = canvas.height,
-      width = canvas.width,
-      context = canvas.getContext('2d');
+    const height = canvas.height;
+    const width = canvas.width;
+    const context = canvas.getContext('2d');
     return context.getImageData(0, 0, width, height);
   }
   function toImageDataFromContext (context) {
-    var
-      canvas = context.canvas,
-      height = canvas.height,
-      width = canvas.width;
+    const canvas = context.canvas;
+    const height = canvas.height;
+    const width = canvas.width;
     return context.getImageData(0, 0, width, height);
   }
   function toCanvas (object) {
-    var
-      data = toImageData(object),
-      canvas = getCanvas(data.width, data.height),
-      context = canvas.getContext('2d');
+    const data = toImageData(object);
+    const canvas = getCanvas(data.width, data.height);
+    const context = canvas.getContext('2d');
 
     context.putImageData(data, 0, 0);
     return canvas;
@@ -150,31 +142,29 @@
 
 
   // ImageData Equality Operators
-  function equalWidth (a, b) {
-    return a.width === b.width;
+  function equalWidth({width}, {width}) {
+    return width === width;
   }
-  function equalHeight (a, b) {
-    return a.height === b.height;
+  function equalHeight({height}, {height}) {
+    return height === height;
   }
   function equalDimensions (a, b) {
     return equalHeight(a, b) && equalWidth(a, b);
   }
   function equal (a, b, tolerance) {
-
-    var
-      aData     = a.data,
-      bData     = b.data,
-      length    = aData.length,
-      i;
+    const aData     = a.data;
+    const bData     = b.data;
+    const length    = aData.length;
+    let i;
 
     tolerance = tolerance || 0;
 
     if (!equalDimensions(a, b)) return false;
     for (i = length; i--;) {
       if (aData[i] !== bData[i] && Math.abs(aData[i] - bData[i]) > tolerance) {
-        var x = i % (a.width * 4);
-        var y = (i - x) / (a.width * 4);
-        var color = x % 4;
+        let x = i % (a.width * 4);
+        const y = (i - x) / (a.width * 4);
+        const color = x % 4;
         x = (x - color) / 4;
         console.log("Difference x", x, "y", y, ["R", "G", "B", "A"][color], "  -  ", aData[i], " !== ", bData[i]);
         return false;
@@ -189,18 +179,23 @@
   function diff (a, b, options) {
     return (equalDimensions(a, b) ? diffEqual : diffUnequal)(a, b, options);
   }
-  function diffEqual (a, b, options) {
+  function diffEqual(a, {data}, options) {
+    const height  = a.height;
+    const width   = a.width;
 
-    var
-      height  = a.height,
-      width   = a.width,
-      c       = getImageData(width, height), // c = a - b
-      aData   = a.data,
-      bData   = b.data,
-      cData   = c.data,
-      length  = cData.length,
-      row, column,
-      i, j, k, v;
+    const // c = a - b
+    c       = getImageData(width, height);
+
+    const aData   = a.data;
+    const bData   = data;
+    const cData   = c.data;
+    const length  = cData.length;
+    let row;
+    let column;
+    let i;
+    let j;
+    let k;
+    let v;
 
     for (i = 0; i < length; i += 4) {
       cData[i] = Math.abs(aData[i] - bData[i]);
@@ -212,19 +207,24 @@
     return c;
   }
   function diffUnequal (a, b, options) {
+    const height  = Math.max(a.height, b.height);
+    const width   = Math.max(a.width, b.width);
 
-    var
-      height  = Math.max(a.height, b.height),
-      width   = Math.max(a.width, b.width),
-      c       = getImageData(width, height), // c = a - b
-      aData   = a.data,
-      bData   = b.data,
-      cData   = c.data,
-      align   = options && options.align,
-      rowOffset,
-      columnOffset,
-      row, column,
-      i, j, k, v;
+    const // c = a - b
+    c       = getImageData(width, height);
+
+    const aData   = a.data;
+    const bData   = b.data;
+    const cData   = c.data;
+    const align   = options && options.align;
+    let rowOffset;
+    let columnOffset;
+    let row;
+    let column;
+    let i;
+    let j;
+    let k;
+    let v;
 
 
     for (i = cData.length - 1; i > 0; i = i - 4) {
@@ -272,10 +272,10 @@
 
 
   // Validation
-  function checkType () {
-    var i;
-    for (i = 0; i < arguments.length; i++) {
-      if (!isImageType(arguments[i])) {
+  function checkType(...args) {
+    let i;
+    for (i = 0; i < args.length; i++) {
+      if (!isImageType(args[i])) {
         throw {
           name : 'ImageTypeError',
           message : 'Submitted object was not an image.'
@@ -296,22 +296,21 @@
 
   jasmine = {
 
-    toBeImageData : function () {
+    toBeImageData() {
       return imagediff.isImageData(this.actual);
     },
 
-    toImageDiffEqual : function (expected, tolerance) {
+    toImageDiffEqual(expected, tolerance) {
 
       if (typeof (document) !== UNDEFINED) {
         this.message = function () {
-          var
-            div     = get('div'),
-            a       = get('div', '<div>Actual:</div>'),
-            b       = get('div', '<div>Expected:</div>'),
-            c       = get('div', '<div>Diff:</div>'),
-            diff    = imagediff.diff(this.actual, expected),
-            canvas  = getCanvas(),
-            context;
+          const div     = get('div');
+          const a       = get('div', '<div>Actual:</div>');
+          const b       = get('div', '<div>Expected:</div>');
+          const c       = get('div', '<div>Diff:</div>');
+          const diff    = imagediff.diff(this.actual, expected);
+          const canvas  = getCanvas();
+          let context;
 
           canvas.height = diff.height;
           canvas.width  = diff.width;
@@ -346,11 +345,9 @@
 
   // Image Output
   function imageDataToPNG (imageData, outputFile, callback) {
-
-    var
-      canvas = toCanvas(imageData),
-      base64Data,
-      decodedImage;
+    const canvas = toCanvas(imageData);
+    let base64Data;
+    let decodedImage;
 
     callback = callback || Function;
 
@@ -365,37 +362,37 @@
 
     createCanvas : getCanvas,
     createImageData : getImageData,
-    getCanvasRef: getCanvasRef,
+    getCanvasRef,
 
-    isImage : isImage,
-    isCanvas : isCanvas,
-    isContext : isContext,
-    isImageData : isImageData,
-    isImageType : isImageType,
+    isImage,
+    isCanvas,
+    isContext,
+    isImageData,
+    isImageType,
 
-    toImageData : function (object) {
+    toImageData(object) {
       checkType(object);
       if (isImageData(object)) { return copyImageData(object); }
       return toImageData(object);
     },
 
-    equal : function (a, b, tolerance) {
+    equal(a, b, tolerance) {
       checkType(a, b);
       a = toImageData(a);
       b = toImageData(b);
       return equal(a, b, tolerance);
     },
-    diff : function (a, b, options) {
+    diff(a, b, options) {
       checkType(a, b);
       a = toImageData(a);
       b = toImageData(b);
       return diff(a, b, options);
     },
 
-    jasmine : jasmine,
+    jasmine,
 
     // Compatibility
-    noConflict : function () {
+    noConflict() {
       root[name] = previous;
       return imagediff;
     }

@@ -1,5 +1,5 @@
-let PNG = require("../lib/png").PNG;
-let fs = require("fs");
+import {PNG} from "../lib/png.js";
+import fs from "fs";
 
 let newfile = new PNG({ width: 10, height: 10 });
 
@@ -19,7 +19,7 @@ for (let y = 0; y < newfile.height; y++) {
 
 newfile
   .pack()
-  .pipe(fs.createWriteStream(__dirname + "/newfile.png"))
-  .on("finish", function () {
+  .pipe(fs.createWriteStream(`${__dirname}/newfile.png`))
+  .on("finish", () => {
     console.log("Written!");
   });
