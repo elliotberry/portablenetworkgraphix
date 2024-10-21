@@ -2,6 +2,20 @@
   "name": "pngjs",
   "version": "7.0.0",
   "description": "PNG encoder/decoder in pure JS, supporting any bit size & interlace, async & sync with full test suite.",
+  "keywords": [
+    "PNG",
+    "decoder",
+    "encoder",
+    "js-png",
+    "node-png",
+    "parser",
+    "png",
+    "png-js",
+    "png-parse",
+    "pngjs"
+  ],
+  "homepage": "https://github.com/pngjs/pngjs",
+  "license": "MIT",
   "contributors": [
     "Alexandre Paré",
     "Gaurav Mali",
@@ -18,51 +32,15 @@
     "elliot"
   ],
   "type": "module",
-  "homepage": "https://github.com/pngjs/pngjs",
-  "keywords": [
-    "PNG",
-    "decoder",
-    "encoder",
-    "js-png",
-    "node-png",
-    "parser",
-    "png",
-    "png-js",
-    "png-parse",
-    "pngjs"
-  ],
-  "engines": {
-    "node": ">=14.19.0"
-  },
-  "main": "./lib/png.js",
+  "main": "./index.js",
   "directories": {
     "lib": "lib",
     "example": "examples",
     "test": "test"
   },
   "files": [
-    "browser.js",
     "lib/"
   ],
-  "scripts": {
-    "build": "yarn prepublish",
-    "prepublish": "yarn browserify",
-    "browserify": "browserify lib/png.js --standalone png > browser.js",
-    "coverage": "nyc --reporter=lcov --reporter=text-summary tape test/*-spec.js",
-    "test": "yarn lint && yarn prettier:check && tape test/*-spec.js | tap-dot && node test/run-compare",
-    "lint": "eslint .",
-    "prettier:write": "prettier --write .",
-    "prettier:check": "prettier --check ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/pngjs/pngjs.git"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/pngjs/pngjs/issues"
-  },
-  "eslintIgnore":["/browser.js", "/test/imagediff.js"],
   "prettier": {
     "arrowParens": "always",
     "bracketSameLine": true,
@@ -83,45 +61,25 @@
     "tabWidth": 2,
     "useTabs": false,
     "embeddedLanguageFormatting": "auto"
-},
-"eslintConfig": {
-    "root": true,
-    "plugins": [
-        "prettier",
-        "@stylistic/js",
-        "unicorn"
-    ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:prettier/recommended",
-        "plugin:unicorn/recommended"
-    ],
-    "env": {
-        "es2021": true,
-        "node": true,
-        "es6": true,
-        "es2024": true
-    },
-    "rules": {
-        "no-unused-vars": "warn",
-        "no-console": "off"
-    }
-},
+  },
   "devDependencies": {
-    "browserify": "17.0.0",
-    "buffer-equal": "^1.0.1",
-    "connect": "3.7.0",
-    "eslint": "8.39.0",
-    "eslint-config-prettier": "8.8.0",
-    "nyc": "15.1.0",
-    "prettier": "2.8.8",
-    "puppeteer": "19.7.1",
-    "serve-static": "1.15.0",
-    "tap-dot": "2.0.0",
-    "tape": "^5.7.5"
+    "@eslint/js": "^9.12.0",
+    "@release-it/bumper": "^6.0.1",
+    "@stylistic/eslint-plugin-js": "^2.9.0",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-no-secrets": "^1.0.2",
+    "eslint-plugin-package-json": "^0.15.3",
+    "eslint-plugin-perfectionist": "^3.8.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-security": "^3.0.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-sonarjs": "^2.0.3",
+    "eslint-plugin-unicorn": "^56.0.0",
+    "prettier": "^3.3.3",
+    "release-it": "^17.7.0"
+  },
+  "engines": {
+    "node": ">=14.19.0"
   }
 }

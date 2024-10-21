@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fs from "fs";
-import {PNG} from "../lib/png.js";
+import PNG from "../index.js";
 import test from "tape";
 import bufferEqual from "buffer-equal";
 

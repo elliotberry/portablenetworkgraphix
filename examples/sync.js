@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fs from "fs";
-import {PNG} from "../lib/png.js";
+import PNG from "../index.js";
 let srcFname = process.argv[2];
 let dstFname = process.argv[3] || "out.png";
 

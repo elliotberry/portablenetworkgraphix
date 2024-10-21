@@ -1,5 +1,5 @@
 import fs from "fs";
-import {PNG} from "../lib/png.js";
+import PNG from "../index.js";
 let w = 320;
 let h = 200;
 

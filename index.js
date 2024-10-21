@@ -1,7 +1,7 @@
 import Stream from "node:stream";
-import Parser from "./parser-async.js";
-import Packer from "./packer-async.js";
-import {read, write} from "./png-sync.js";
+import Parser from "./lib/parser-async.js";
+import Packer from "./lib/packer-async.js";
+import {read, write} from "./lib/png-sync.js";
 
 class PNG extends Stream {
   constructor(options) {

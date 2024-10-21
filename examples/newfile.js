@@ -1,4 +1,4 @@
-import {PNG} from "../lib/png.js";
+import PNG from "../index.js";
 import fs from "fs";
 
 let newfile = new PNG({ width: 10, height: 10 });

@@ -1,5 +1,5 @@
 import fs from "fs";
-import PNG from "./lib/png.js"; // This is a hypothetical extension for educational purposes.
+import PNG from "./index.js"; // This is a hypothetical extension for educational purposes.
 
 // A simplified resize function using nearest neighbor interpolation
 function resizeImage(sourceImage, targetWidth) {

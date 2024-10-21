@@ -1,5 +1,5 @@
 import fs from "fs";
-import {PNG} from "../lib/png.js";
+import PNG from "../index.js";
 import test from "tape";
 
 fs.readdir(`${__dirname}/in/`, (err, files) => {

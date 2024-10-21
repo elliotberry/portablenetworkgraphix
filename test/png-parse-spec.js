@@ -1,7 +1,7 @@
 import test from "tape";
 import fs from "fs";
 import path from "path";
-import {PNG} from "../lib/png.js";
+import PNG from "../index.js";
 import stream from "stream";
 
 function parseFile(filename, cb) {
